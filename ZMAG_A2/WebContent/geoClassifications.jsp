@@ -1,7 +1,7 @@
 <!--
 // Zack Meadows & Alex Galka
-// PROG3060 Assignment 1
-// 2018-02-09  
+// PROG3060 Assignment 2
+// 2018-03-27
 -->
 <jsp:include page="header.jsp" />
 <%@ page import="java.util.*" %>

@@ -1,7 +1,7 @@
 // ----------------------------------------------------
 // Zack Meadows & Alex Galka
-// PROG3060 Assignment 1
-// 2018-02-09
+// PROG3060 Assignment 2
+// 2018-03-27
 // ----------------------------------------------------
 
 package prog3060.zmag_a2;
@@ -63,16 +63,17 @@ public class ConnectionBean {
 	}
 
 	
-	public int getHouseholdsMatchingAreaSQL(String level, Connection dbConn) {
-		
+	public int getHouseholdsMatchingAreaSQL(String area, Connection dbConn) {
+
 		int householdCount=0;
 		String query ="SELECT COUNT(*) from Household h inner join CensusYear y on h.censusYear=y.censusYearId "
 				+ "inner join GeographicArea a on h.geographicArea = a.geographicAreaId "
 				+ "inner join householdEarners e on h.householdEarners=e.id "
 				+ "inner join householdSize s on h.householdSize=s.id "
-				+ "inner join totalIncome i on h.totalIncome=i.id where a.level="+level
+				+ "inner join totalIncome i on h.totalIncome=i.id where (TRIM(CAST(CAST(a.alternativeCode AS CHAR(30)) AS VARCHAR(30))) LIKE '"+area+ "%')"
 						+ " and y.censusYear=2016 and e.description='1 earner or more'"
 						+ " and s.description='2 or more persons' and i.description='$80,000 to $89,999'";
+
 		
 		try (Statement statement = dbConn.createStatement(); ResultSet result = statement.executeQuery(query)) {
 			

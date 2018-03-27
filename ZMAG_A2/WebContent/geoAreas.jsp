@@ -43,7 +43,7 @@
 	    }
 		
 		if(null!=level &&(level.equals("0")||level.equals("1"))){
-			householdsMatchingArea=	connectionBean.getHouseholdsMatchingAreaSQL(level,dbConnection);
+			householdsMatchingArea=	connectionBean.getHouseholdsMatchingAreaSQL(id, dbConnection);
 		}
     	%>
     	<table class="table table-hover table-dark table-sm table-striped">

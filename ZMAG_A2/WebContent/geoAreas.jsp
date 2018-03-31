@@ -31,17 +31,12 @@
     	
 		List<Object[]> data = new ArrayList<Object[]>();
 		
-		int householdsMatchingArea = 0;
-		if("VIEW_BY_LEVEL".equals(ACTION)) {
+		if("VIEW_BY_LEVEL".equals(ACTION))
 			data = jpaBean.getGeographicAreasByLevel(level);
-	    }
-		else if("VIEW_BY_PARENT".equals(ACTION)){
-			data = jpaBean.getGeographicAreasByParent(code, level);
-	    }
-		else{
-			data = jpaBean.getGeographicAreasByID(id);
-	    }
-		
+		else
+			data = jpaBean.getAllGeographicAreas();
+
+		int householdsMatchingArea = 0;
 		if(level <= 1){
 			//householdsMatchingArea=	connectionBean.getHouseholdsMatchingAreaSQL(id, dbConnection);
 		}

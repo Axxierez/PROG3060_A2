@@ -7,22 +7,13 @@
 package prog3060.zmag_a2;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 public class JPABean {
 	
@@ -51,7 +42,7 @@ public class JPABean {
         try
         {
 	    	validConn = true;
-	    	Map properties = new HashMap();
+	    	Map<String, String> properties = new HashMap<String, String>();
 	    	properties.put("hibernate.connection.username", user);
 	    	properties.put("hibernate.connection.password", pass);
 	    	
@@ -157,7 +148,32 @@ public class JPABean {
 		return 0;
 
 	}
+	
+	public List<Object[]> getHouseholdsByArea(int id) {
+    	String jpqlQuery = "SELECT h FROM Household h"
+    			+ " WHERE h.geographicArea.geographicAreaID = :id AND h.censusYear.censusYear = 2016"
+    			+ " AND h.householdEarners.description LIKE '1 earner or more'"
+    			+ " AND h.householdsByAgeRange.description LIKE 'Total - Households by number of persons aged 0 to 17 years'"
+    			+ " AND h.householdSize.description LIKE '2 or more persons'"
+    			+ " AND h.householdType.description LIKE 'One couple census family without other persons in the household'"
+    			+ " AND h.totalIncome.description LIKE '$80,000 to $89,999'";
+    		
+	    Query query = entityManager.createQuery(jpqlQuery);
+	    query.setParameter("id", id);
 
+		return doQuery(query);
+	}
+	
+	public List<Object[]> getAllGeographicAreas() {
+    	String jpqlQuery = "SELECT a, ga FROM Age a"
+    			+ " JOIN a.geographicArea ga "
+    			+ " WHERE a.ageGroup = 1 AND a.censusYear = 1"
+    			+ " ORDER BY ga.level, ga.name";
+    	
+    	Query query = entityManager.createQuery(jpqlQuery);
+		return doQuery(query);
+	}
+	
 	public List<Object[]> getGeographicAreasByID(int id) {
     	String jpqlQuery = "SELECT a, ga FROM Age a"
     			+ " JOIN a.geographicArea ga "
@@ -177,7 +193,7 @@ public class JPABean {
         	query = entityManager.createQuery(jpqlQuery);
     	}
     	
-		return getGeographicAreas(query);
+		return doQuery(query);
 	}
 
 	public List<Object[]> getGeographicAreasByParent(int code, int level) {
@@ -188,12 +204,12 @@ public class JPABean {
     	
     	Query query = null;
     	if(code != 0) {
+    		// FIX THIS
 			jpqlQuery += " AND ga.alternativeCode LIKE '" + code + "%'"
 					+ " AND ga.level > :level"
 					+ order;
 			
 	    	query = entityManager.createQuery(jpqlQuery);
-	    	//query.setParameter("codeCheck", code + "%");
 	    	query.setParameter("level", level);
     	}
     	else {
@@ -201,18 +217,19 @@ public class JPABean {
         	query = entityManager.createQuery(jpqlQuery);
     	}
     	
-		return getGeographicAreas(query);
+		return doQuery(query);
 	}
 
 	public List<Object[]> getGeographicAreasByLevel(int level) {
     	String jpqlQuery = "SELECT a, ga FROM Age a"
     			+ " JOIN a.geographicArea ga "
-    			+ " WHERE a.ageGroup.age = 1 AND a.censusYear = 1";
+    			+ " WHERE a.ageGroup = 1 AND a.censusYear = 1";
     	String order = " ORDER BY ga.level, ga.name";
     	
     	Query query = null;
     	if(level != 0) {
-			jpqlQuery += " AND ga.level = :level";
+			jpqlQuery += " AND ga.level = :level"
+					+ order;
 			
 	    	query = entityManager.createQuery(jpqlQuery);
 	    	query.setParameter("level", level);
@@ -221,10 +238,10 @@ public class JPABean {
     		jpqlQuery += order;
         	query = entityManager.createQuery(jpqlQuery);
     	}
-		return getGeographicAreas(query);
+		return doQuery(query);
 	}
 
-	private List <Object[]> getGeographicAreas(Query query) {
+	private List <Object[]> doQuery(Query query) {
 		try {
         	entityManager.getTransaction().begin();
         	
@@ -245,42 +262,32 @@ public class JPABean {
 		return null;
 	}
 
-	public List<AgeGroup> getAgeGroupPopulation(Connection dbConn) {
-//		String query = "SELECT a.censusYear, ag.description, a.male, a.female FROM AGE a JOIN AGEGROUP ag ON ag.agegroupid = a.agegroup"
-//				+ " WHERE ag.agegroupid in(3, 9, 15, 22, 28, 34, 40, 46, 52, 58, 64, 70, 76, 83, 89, 95, 101, 108, 114, 120, 126)"
-//				+ " AND geographicArea = 1 ORDER BY ag.description";
-//		try (Statement statement = dbConn.createStatement(); ResultSet result = statement.executeQuery(query)) {
-//			List<AgeGroup> resultSet = new ArrayList<AgeGroup>();
-//			String current_ageGroup = "";
-//			String last_ageGroup = "";
-//			AgeGroup tempAgeGroup = new AgeGroup();
-//			while (result.next()) {
-//				current_ageGroup = result.getString("description");
-//
-//				// tempAgeGroup.setAgegroup(current_ageGroup);
-//				if (result.getString("censusyear").equals("1")) {
-//					// tempAgeGroup.setMalePopulation2016(Integer.parseInt(result.getString("male")));
-//					// tempAgeGroup.setFemalePopulation2016(Integer.parseInt(result.getString("female")));
-//				} else {
-//					// tempAgeGroup.setMalePopulation2011(Integer.parseInt(result.getString("male")));
-//					// tempAgeGroup.setFemalePopulation2011(Integer.parseInt(result.getString("female")));
-//				}
-//				if (current_ageGroup.equals(last_ageGroup)) {
-//					resultSet.add(tempAgeGroup);
-//					tempAgeGroup = new AgeGroup();
-//				} else {
-//					last_ageGroup = current_ageGroup;
-//				}
-//			}
-//			dbConn.rollback();
-//			return resultSet;
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			System.exit(e.getErrorCode());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			System.exit(EXIT_UNHANDLED_ERROR);
-//		}
-		return null;
-	}
+	public List<Object[]> getAgeGroupPopulation(int censusYear) {
+    	String jpqlQuery = "SELECT a, ag FROM Age a"
+    			+ " JOIN a.ageGroup ag "
+    			+ " WHERE ag.ageGroupID IN (3, 9, 15, 22, 28, 34, 40, 46, 52, 58, 64, 70, 76, 83, 89, 95, 101, 108, 114, 120, 126)"
+    			+ " AND a.geographicArea.geographicAreaID = 1"
+    			+ " AND a.censusYear.censusYear = :censusYear"
+    			+ "	ORDER BY ag.description";
+    	Query query = entityManager.createQuery(jpqlQuery);
+    	query.setParameter("censusYear", censusYear);
+    	
+		try {
+        	entityManager.getTransaction().begin();
+        	
+        	List <Object[]> resultSet = query.getResultList();
+			return resultSet;
+		}
+        catch (Exception e)
+        {
+            if (entityManager != null)
+            	entityManager.getTransaction().rollback();
+            e.printStackTrace();
+        }
+        finally
+        {
+            if (entityManager != null)
+            	entityManager.getTransaction().rollback();
+        }
+		return null;}
 }

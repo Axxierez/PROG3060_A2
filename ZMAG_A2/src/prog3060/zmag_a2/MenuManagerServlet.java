@@ -1,8 +1,6 @@
 package prog3060.zmag_a2;
 
 import java.io.IOException;
-import java.sql.Connection;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -45,10 +43,6 @@ public class MenuManagerServlet extends HttpServlet {
 
         if("VIEW_ALL_CLASSIFICATIONS".equals(ACTION)){
             response.sendRedirect("./geoClassifications.jsp");
-            return;
-        }
-        if("VIEW_ALL_GEOAREAS".equals(ACTION)){
-            response.sendRedirect("./geoAreas.jsp");
             return;
         }
         if("VIEW_DETAILS".equals(ACTION)){

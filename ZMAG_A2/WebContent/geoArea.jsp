@@ -28,14 +28,50 @@
         	response.sendRedirect("./login.jsp");
         	return;
         }
-    	
+		List<Object[]> detailData = jpaBean.getGeographicAreasByID(id);
+    	if(detailData != null){
+	        Iterator <Object[]> dataIterator = detailData.iterator();
+	        while(dataIterator.hasNext())
+	        {
+	            Object[] item = dataIterator.next();
+	        	Age age = (Age) item[0];
+	        	GeographicArea geoArea = (GeographicArea) item[1];
+	        	
+	        	// This is being UBER dumb
+	        	
+	        	//List<Object[]> householdData = jpaBean.getHouseholdsByArea(geoArea.getGeographicAreaID());
+	        	//Iterator <Object[]> householdIterator = householdData.iterator();
+	        	//if(householdIterator.hasNext()){
+		        //	Object[] householdItem = householdIterator.next();
+		        //	Household household = (Household) householdItem[0];
+	        	//}
+	        	
+	        	int householdCount = 0;
+	        	try{
+		        	//Household household = (Household) householdData.get(0)[0];
+		        	//householdCount = household.getNumberReported();
+		        } catch(Exception e){
+		        	householdCount = 0;
+		        }
+
+		        %><hr><div class="mx-5"><h2><% out.print(geoArea.getName());%></h2>
+		        <table>
+		        <tr><td class="font-weight-bold">Code </td><td class="text-right px-5"><% out.print(geoArea.getCode());%></td></tr>
+		        <tr><td class="font-weight-bold">Level </td><td class="text-right px-5"><% out.print(geoArea.getLevel());%></td></tr>
+		        <tr><td class="font-weight-bold">Alternative Code </td><td class="text-right px-5"><% out.print(geoArea.getAlternativeCode());%></td></tr>
+		        <tr><td class="font-weight-bold">Total Population </td><td class="text-right px-5"><% out.print(age.getCombined());%></td></tr>
+		        <tr><td class="font-weight-bold">Male Population </td><td class="text-right px-5"><% out.print(age.getMale());%></td></tr>
+		        <tr><td class="font-weight-bold">Female Population </td><td class="text-right px-5"><% out.print(age.getFemale());%></td></tr>
+		        <%if(level <= 1){%>
+		        <tr><td class="font-weight-bold">Total Households </td><td class="text-right px-5"><% out.print(householdCount);%></td></tr>
+		        <%}%>
+		        </table>
+		        </div><hr><%
+	    	}
+    	}
 		List<Object[]> data = jpaBean.getGeographicAreasByParent(code, level);
-		int householdsMatchingArea = 0;
-		
-		if(level <= 1){
-			//householdsMatchingArea=	connectionBean.getHouseholdsMatchingAreaSQL(id, dbConnection);
-		}
     	%>
+    	<h4 class="mx-5">Geographic Areas</h4>
     	<table class="table table-hover table-dark table-sm table-striped">
 		  <thead>
 		    <tr>
@@ -78,9 +114,5 @@
 	    	}
     	}
         %></tbody></table>
-        
-        <% if(householdsMatchingArea!=0){%>
-        	Households Matching Criteria:<% out.print(householdsMatchingArea);
-        }%>
 	</body>
 </html>

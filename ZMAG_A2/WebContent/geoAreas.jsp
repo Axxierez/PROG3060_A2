@@ -23,7 +23,8 @@
     	String level = (String) session.getAttribute("level");
     	String altCode = (String) session.getAttribute("altCode");
     	String ACTION = (String) session.getAttribute("action");
-    	if(null == session.getAttribute("jpaBean")){
+    	
+    	if(!jpaBean.isValid()){
         	response.sendRedirect("./login.jsp");
         	return;
         }

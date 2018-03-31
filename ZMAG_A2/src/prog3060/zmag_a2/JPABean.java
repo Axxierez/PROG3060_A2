@@ -12,7 +12,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.persistence.EntityManager;
@@ -25,27 +27,33 @@ import javax.servlet.http.HttpSession;
 public class JPABean {
 	
     static final String PERSISTENCE_UNIT_NAME = "ZMAG_A2";
+    
     static EntityManagerFactory entityMF = null;
     static EntityManager entityManager = null;
-    
-	static final int EXIT_FAILURE_COMMAND_LINE_ARGS = 1;
-	static final int EXIT_UNHANDLED_ERROR = 2;
+    boolean validConn = false;
 
-	public JPABean() {
+	public boolean isValid() {
+		return validConn;
+	}
+	public boolean openConn(String user, String pass) {
         try
         {
-	    	entityMF = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+	    	validConn = true;
+	    	Map properties = new HashMap();
+	    	properties.put("hibernate.connection.username", user);
+	    	properties.put("hibernate.connection.password", pass);
 	    	
-	    	// Something we'll need to work with later
-//        	entityManager.setProperty("javax.persistence.jdbc.user", "user");
-//        	entityManager.setProperty("javax.persistence.jdbc.password", "123");
+	    	entityMF = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, properties);
 	    	entityManager = entityMF.createEntityManager();
+	    	return true;
         }
         catch (Exception e)
         {
+	    	validConn = false;
             if (entityManager != null)
             	entityManager.getTransaction().rollback();
             e.printStackTrace();
+            return false;
         }
 	}
 	
@@ -55,6 +63,7 @@ public class JPABean {
         	entityManager.close();
         if (entityMF != null)
         	entityMF.close();
+    	validConn = false;
 	}
 	
 	public int getHouseholdsMatchingAreaSQL(String area, Connection dbConn) {

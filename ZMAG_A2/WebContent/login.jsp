@@ -12,7 +12,7 @@
 <body style="background-color:#343a40">
 <jsp:useBean id="jpaBean" class="prog3060.zmag_a2.JPABean" scope="session"/>
 <%
-if(null != session.getAttribute("jpaBean")){
+if(jpaBean.isValid()){
 	response.sendRedirect("./geoClassifications.jsp");
 	return;
 }

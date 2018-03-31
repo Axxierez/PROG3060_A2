@@ -35,6 +35,18 @@ public class JPABean {
 	public boolean isValid() {
 		return validConn;
 	}
+	public int parseStringToInt(String input) {
+		int output = 0;
+		try
+		{
+		    output = Integer.parseInt(input);
+		}
+		catch (NumberFormatException e)
+		{
+			output = 0;
+		}
+		return output;
+	}
 	public boolean openConn(String user, String pass) {
         try
         {
@@ -146,14 +158,14 @@ public class JPABean {
 
 	}
 
-	public List<Object[]> getGeographicAreasByID(String id) {
+	public List<Object[]> getGeographicAreasByID(int id) {
     	String jpqlQuery = "SELECT a, ga FROM Age a"
     			+ " JOIN a.geographicArea ga "
     			+ " WHERE a.ageGroup = 1 AND a.censusYear = 1";
     	String order = " ORDER BY ga.level, ga.name";
     	
     	Query query = null;
-    	if(id != null) {
+    	if(id != 0) {
 			jpqlQuery +=" AND ga.geographicAreaID = :id"
 					+ order;
 			
@@ -168,20 +180,20 @@ public class JPABean {
 		return getGeographicAreas(query);
 	}
 
-	public List<Object[]> getGeographicAreasByParent(String code, String level) {
+	public List<Object[]> getGeographicAreasByParent(int code, int level) {
     	String jpqlQuery = "SELECT a, ga FROM Age a"
     			+ " JOIN a.geographicArea ga "
     			+ " WHERE a.ageGroup = 1 AND a.censusYear = 1";
-    	String order = " ORDER BY ga.level, ga.name";
+    	String order = " ORDER BY ga.alternativeCode DESC";
     	
     	Query query = null;
-    	if(code != null) {
-			jpqlQuery += " AND (TRIM(CAST(CAST(ga.alternativeCode AS CHAR(30)) AS VARCHAR(30))) LIKE :codeCheck"
+    	if(code != 0) {
+			jpqlQuery += " AND ga.alternativeCode LIKE '" + code + "%'"
 					+ " AND ga.level > :level"
 					+ order;
 			
 	    	query = entityManager.createQuery(jpqlQuery);
-	    	query.setParameter("codeCheck", code + "%");
+	    	//query.setParameter("codeCheck", code + "%");
 	    	query.setParameter("level", level);
     	}
     	else {
@@ -192,14 +204,14 @@ public class JPABean {
 		return getGeographicAreas(query);
 	}
 
-	public List<Object[]> getGeographicAreasByLevel(String level) {
+	public List<Object[]> getGeographicAreasByLevel(int level) {
     	String jpqlQuery = "SELECT a, ga FROM Age a"
     			+ " JOIN a.geographicArea ga "
     			+ " WHERE a.ageGroup.age = 1 AND a.censusYear = 1";
     	String order = " ORDER BY ga.level, ga.name";
     	
     	Query query = null;
-    	if(level != null) {
+    	if(level != 0) {
 			jpqlQuery += " AND ga.level = :level";
 			
 	    	query = entityManager.createQuery(jpqlQuery);
@@ -212,7 +224,7 @@ public class JPABean {
 		return getGeographicAreas(query);
 	}
 
-	public List <Object[]> getGeographicAreas(Query query) {
+	private List <Object[]> getGeographicAreas(Query query) {
 		try {
         	entityManager.getTransaction().begin();
         	

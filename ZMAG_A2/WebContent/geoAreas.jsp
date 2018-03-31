@@ -18,10 +18,10 @@
 	<body>
         <jsp:useBean id="jpaBean" class="prog3060.zmag_a2.JPABean" scope="session"/>
     	<%
-    	String id = (String) session.getAttribute("id");
-    	String code = (String) session.getAttribute("code");
-    	String level = (String) session.getAttribute("level");
-    	String altCode = (String) session.getAttribute("altCode");
+    	int id = jpaBean.parseStringToInt((String)session.getAttribute("id"));
+    	int code = jpaBean.parseStringToInt((String)session.getAttribute("code"));
+    	int level = jpaBean.parseStringToInt((String)session.getAttribute("level"));
+    	int altCode = jpaBean.parseStringToInt((String)session.getAttribute("altCode"));
     	String ACTION = (String) session.getAttribute("action");
     	
     	if(!jpaBean.isValid()){
@@ -42,7 +42,7 @@
 			data = jpaBean.getGeographicAreasByID(id);
 	    }
 		
-		if(null!=level &&(level.equals("0")||level.equals("1"))){
+		if(level <= 1){
 			//householdsMatchingArea=	connectionBean.getHouseholdsMatchingAreaSQL(id, dbConnection);
 		}
     	%>
@@ -61,29 +61,31 @@
 		  </thead>
 		  <tbody>
     	<%
-        Iterator <Object[]> dataIterator = data.iterator();
-        while(dataIterator.hasNext())
-        {
-            Object[] item = dataIterator.next();
-        	Age age = (Age) item[0];
-        	GeographicArea geoArea = (GeographicArea) item[1];
-        	String detailParameters = "?id=" + geoArea.getGeographicAreaID() +
-        	        "&code=" + geoArea.getCode() +
-        	        "&level=" + geoArea.getLevel() +
-        	        "&altCode=" + geoArea.getAlternativeCode() +
-        	        "&geoAreaName=" + geoArea.getName().replace("'","");
-        	
-	    	%><tr onclick="window.location=<%out.print("'./MenuManagerServlet" + detailParameters + 
-	        "&action=" + "VIEW_DETAILS" + "\'");%>"><%
-	        %><td class="text-center"><% out.print(geoArea.getGeographicAreaID());%></td><% 
-	        %><td><% out.print(geoArea.getName());%></td><% 
-	        %><td><% out.print(geoArea.getCode());%></td><% 
-	        %><td><% out.print(geoArea.getLevel());%></td><% 
-	        %><td><% out.print(geoArea.getAlternativeCode());%></td><% 
-	        %><td><% out.print(age.getCombined());%></td><% 
-	        %><td><% out.print(age.getMale());%></td><% 
-	        %><td><% out.print(age.getFemale());%></td><% 
-	        %></tr><%
+    	if(data != null){
+	        Iterator <Object[]> dataIterator = data.iterator();
+	        while(dataIterator.hasNext())
+	        {
+	            Object[] item = dataIterator.next();
+	        	Age age = (Age) item[0];
+	        	GeographicArea geoArea = (GeographicArea) item[1];
+	        	String detailParameters = "?id=" + geoArea.getGeographicAreaID() +
+	        	        "&code=" + geoArea.getCode() +
+	        	        "&level=" + geoArea.getLevel() +
+	        	        "&altCode=" + geoArea.getAlternativeCode() +
+	        	        "&geoAreaName=" + geoArea.getName().replace("'","");
+	        	
+		    	%><tr onclick="window.location=<%out.print("'./MenuManagerServlet" + detailParameters + 
+		        "&action=" + "VIEW_DETAILS" + "\'");%>"><%
+		        %><td class="text-center"><% out.print(geoArea.getGeographicAreaID());%></td><% 
+		        %><td><% out.print(geoArea.getName());%></td><% 
+		        %><td><% out.print(geoArea.getCode());%></td><% 
+		        %><td><% out.print(geoArea.getLevel());%></td><% 
+		        %><td><% out.print(geoArea.getAlternativeCode());%></td><% 
+		        %><td><% out.print(age.getCombined());%></td><% 
+		        %><td><% out.print(age.getMale());%></td><% 
+		        %><td><% out.print(age.getFemale());%></td><% 
+		        %></tr><%
+	    	}
     	}
         %></tbody></table>
         

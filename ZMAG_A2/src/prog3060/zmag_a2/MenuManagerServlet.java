@@ -57,6 +57,10 @@ public class MenuManagerServlet extends HttpServlet {
             response.sendRedirect("./geoAreas.jsp");
             return;
         }
+        if("VIEW_DETAILS".equals(ACTION)){
+            response.sendRedirect("./geoArea.jsp");
+            return;
+        }
         
         response.sendRedirect("./geoAreas.jsp");
         return;

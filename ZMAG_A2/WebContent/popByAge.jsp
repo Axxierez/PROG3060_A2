@@ -43,13 +43,10 @@
 	        for(AgeGroup item : ageGroups)
 	        {
 		        %><tr><%
-		        %><td><% out.print(item.getAgegroup());%></td><% 
-		        %><td><% out.print(item.getMalePopulation2011());%></td><% 
-		        %><td><% out.print(item.getFemalePopulation2011());%></td><% 
-		        %><td><% out.print(item.getMalePopulation2011() + item.getFemalePopulation2011());%></td><% 
-		        %><td><% out.print(item.getMalePopulation2016());%></td><% 
-		        %><td><% out.print(item.getFemalePopulation2016());%></td><% 
-		        %><td><% out.print(item.getMalePopulation2016() + item.getFemalePopulation2016());%></td><% 
+		        %><td><% out.print("");%></td><% 
+		        %><td><% out.print("");%></td><% 
+		        %><td><% out.print("");%></td><% 
+		        %><td><% out.print("");%></td><% 
 		        %></tr><%
 	    	}
 	        %>

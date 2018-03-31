@@ -24,7 +24,7 @@ if(null != session.getAttribute("dbConnection")){
 		  <div class="panel-heading">Login</div>
 		  <div class="panel-body">
 		    <form action="LoginServlet" method="POST">     
-			      <input type="text" class="form-control" name="username" placeholder="Username" autofocus="" />
+			      <input type="text" class="form-control" name="username" placeholder="Username" autofocus/>
 			      <input type="password" class="form-control" name="password" placeholder="Password" />      
 		      <button class="btn btn-lg btn-info btn-block" type="submit">Login</button>   
 		    </form>

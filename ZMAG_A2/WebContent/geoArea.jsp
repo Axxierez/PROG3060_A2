@@ -1,7 +1,7 @@
 <!--
 // Zack Meadows & Alex Galka
 // PROG3060 Assignment 2
-// 2018-03-27 
+// 2018-03-30 
 -->
 <jsp:include page="header.jsp" />
 <%@ page import="java.util.*" %>
@@ -11,7 +11,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Geographic Area List</title>
+		<title>Geographic Area</title>
 		<link href=”bootstrap/css/bootstrap.min.css” rel=”stylesheet” type=”text/css” />
 		<script type=”text/javascript” src=”bootstrap/js/bootstrap.min.js”></script>
 	</head>
@@ -19,6 +19,7 @@
         <jsp:useBean id="connectionBean" class="prog3060.zmag_a2.ConnectionBean" scope="session"/>
     	<%
     	String id = (String) session.getAttribute("id");
+    	String name = (String) session.getAttribute("geoAreaName");
     	String code = (String) session.getAttribute("code");
     	String level = (String) session.getAttribute("level");
     	String altCode = (String) session.getAttribute("altCode");
@@ -29,23 +30,9 @@
         }
     	Connection dbConnection = (Connection) session.getAttribute("dbConnection");
     	
-		List<GeographicArea> geoAreas = new ArrayList<GeographicArea>();
-		
-		int householdsMatchingArea = 0;
-		if("VIEW_BY_LEVEL".equals(ACTION)) {
-	    	geoAreas = connectionBean.getGeographicAreasByLevel(level,dbConnection);
-	    }
-		else if("VIEW_BY_PARENT".equals(ACTION)){
-	    	geoAreas = connectionBean.getGeographicAreasByParent(id, code, level, dbConnection);
-	    }
-		else{
-	    	geoAreas = connectionBean.getGeographicAreasByID(id,dbConnection);
-	    }
-		
-		if(null!=level &&(level.equals("0")||level.equals("1"))){
-			householdsMatchingArea=	connectionBean.getHouseholdsMatchingAreaSQL(id, dbConnection);
-		}
+		List<GeographicArea> childAreas = connectionBean.getGeographicAreasByParent(id, code, level, dbConnection);
     	%>
+		<h2><% out.print(name); %></h2>
     	<table class="table table-hover table-dark table-sm table-striped">
 		  <thead>
 		    <tr>
@@ -61,7 +48,7 @@
 		  </thead>
 		  <tbody>
     	<%
-        for(GeographicArea item : geoAreas)
+        for(GeographicArea item : childAreas)
         {
         	String detailParameters = "?id=" + item.getGeographicAreaID() +
         	        "&code=" + item.getCode() +
@@ -82,9 +69,5 @@
 	        %></tr><%
     	}
         %></tbody></table>
-        
-        <% if(householdsMatchingArea!=0){%>
-        	Households Matching Criteria:<% out.print(householdsMatchingArea);
-        }%>
 	</body>
 </html>

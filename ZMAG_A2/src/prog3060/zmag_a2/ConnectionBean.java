@@ -147,18 +147,20 @@ public class ConnectionBean {
 		if (id != null) {
 			query = BASE_QUERY + " AND geographicAreaID = " + id;
 		}
+		query += " ORDER BY level, name";
 		return getGeographicAreas(query, dbConn);
 	}
 
-	public List<GeographicArea> getGeographicAreasByParent(String id, String code, Connection dbConn) {
+	public List<GeographicArea> getGeographicAreasByParent(String id, String code, String level, Connection dbConn) {
 		String query = BASE_QUERY;
 		if (code != null) {
 			// Look at all these hoops I have to jump through since derby can't cast an int
 			// as a varchar
 			query = BASE_QUERY + " AND (TRIM(CAST(CAST(alternativeCode AS CHAR(30)) AS VARCHAR(30))) LIKE '" + code
-					+ "%' OR geographicAreaId = " + id + ")";
+					+ "%' OR geographicAreaId = " + id + ") AND level > " + level;
 
 		}
+		query += " ORDER BY level, name";
 		return getGeographicAreas(query, dbConn);
 	}
 
@@ -167,6 +169,7 @@ public class ConnectionBean {
 		if (level != null) {
 			query = BASE_QUERY + " AND level = " + level;
 		}
+		query += " ORDER BY level, name";
 		return getGeographicAreas(query, dbConn);
 	}
 

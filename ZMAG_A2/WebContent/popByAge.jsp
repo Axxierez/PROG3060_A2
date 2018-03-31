@@ -16,14 +16,14 @@
 		<script type=”text/javascript” src=”bootstrap/js/bootstrap.min.js”></script>
 	</head>
 	<body>
-        <jsp:useBean id="connectionBean" class="prog3060.zmag_a2.ConnectionBean" scope="session"/>
+        <jsp:useBean id="jpaBean" class="prog3060.zmag_a2.JPABean" scope="session"/>
     	<%
-    	if(null == session.getAttribute("dbConnection")){
+    	if(null == session.getAttribute("jpaBean")){
         	response.sendRedirect("./login.jsp");
         	return;
         }
     	Connection dbConnection = (Connection) session.getAttribute("dbConnection");
-    	List<AgeGroup> ageGroups = connectionBean.getAgeGroupPopulation(dbConnection);
+    	List<AgeGroup> ageGroups = jpaBean.getAgeGroupPopulation(dbConnection);
     	%>
     	<table class="table table-hover table-dark table-sm table-striped">
 			  <thead>

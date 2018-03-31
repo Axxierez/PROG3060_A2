@@ -10,9 +10,9 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body style="background-color:#343a40">
-<jsp:useBean id="connectionBean" class="prog3060.zmag_a2.ConnectionBean" scope="session"/>
+<jsp:useBean id="jpaBean" class="prog3060.zmag_a2.JPABean" scope="session"/>
 <%
-if(null != session.getAttribute("dbConnection")){
+if(null != session.getAttribute("jpaBean")){
 	response.sendRedirect("./geoClassifications.jsp");
 	return;
 }

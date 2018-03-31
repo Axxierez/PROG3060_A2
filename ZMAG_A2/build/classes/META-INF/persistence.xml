@@ -17,7 +17,7 @@
             <property name="hibernate.connection.url" value="jdbc:derby://localhost:1527/CanadaCensusDB"/>
             <property name="hibernate.default_schema" value="APP"/>
             <property name="hibernate.connection.username" value="user"/>
-            <property name="hibernate.connection.password" value="123"/>
+            <property name="hibernate.connection.password" value="zmag"/>
             <property name="hibernate.connection.pool_size" value="10"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect"/>

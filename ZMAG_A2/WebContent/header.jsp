@@ -17,6 +17,7 @@
 			<button class=" btn btn-dark" onclick="window.location='./MenuManagerServlet?action=VIEW_ALL_CLASSIFICATIONS'">View Classifications</button>
 			<button class=" btn btn-dark" onclick="window.location='./MenuManagerServlet?action=VIEW_ALL_GEOAREAS'">View All Geographic Areas</button>
 			<button class=" btn btn-dark" onclick="window.location='./popByAge.jsp'">View Population by Age</button>
+			<button class=" btn btn-dark" onclick="window.location='./medianHouseholdIncome.jsp'">Median Household Income</button>
 			</div>
 		</div>
 	</body>

@@ -202,6 +202,9 @@ public class JPABean {
     			+ " WHERE a.ageGroup = 1 AND a.censusYear = 1";
     	String order = " ORDER BY ga.alternativeCode DESC";
     	
+    	
+
+    	Query nativeQuery = null;
     	Query query = null;
     	if(code != 0) {
     		// FIX THIS
@@ -211,6 +214,15 @@ public class JPABean {
 			
 	    	query = entityManager.createQuery(jpqlQuery);
 	    	query.setParameter("level", level);
+	    	
+	    	/*nativeQuery = entityManager.createNativeQuery("SELECT a, ga FROM Age a"
+	    			+ " JOIN a.geographicArea ga "
+	    			+ " WHERE a.ageGroup = 1 AND a.censusYear = 1 AND (cast (ga.alternativeCode as char(30))) LIKE '"+code+"%'"
+	    			+ " AND ga.level > :level"
+					+ order);*/
+	    	
+	    	query = entityManager.createQuery(jpqlQuery);
+			query.setParameter("level", level);
     	}
     	else {
     		jpqlQuery += order;
@@ -290,4 +302,37 @@ public class JPABean {
             	entityManager.getTransaction().rollback();
         }
 		return null;}
+	
+	public List<Object[]> getMedianHouseholdIncome() {
+    	String jpqlQuery = "select h, ga FROM Household h join h.geographicArea ga"
+    			+ " WHERE h.censusYear.censusYear=2016"
+    			+ " AND h.householdSize.description like '2 or more persons'"
+    			+ " AND h.householdType.description like 'One couple census family without other persons in the household'"
+    			+ " AND h.householdEarners.description like '1 earner or more'"
+    			+ " AND h.householdsByAgeRange.id = 9"
+    			+ " AND ga.level=2"
+    		;
+    	
+    	String tempQuery ="FROM GeographicArea g where g.censusYear";
+    	Query query = entityManager.createQuery(jpqlQuery);
+    	
+		try {
+        	entityManager.getTransaction().begin();
+        	
+        	List <Object[]> resultSet = query.getResultList();
+			return resultSet;
+		}
+        catch (Exception e)
+        {
+            if (entityManager != null)
+            	entityManager.getTransaction().rollback();
+            e.printStackTrace();
+        }
+        finally
+        {
+            if (entityManager != null)
+            	entityManager.getTransaction().rollback();
+        }
+		return null;}
+	
 }

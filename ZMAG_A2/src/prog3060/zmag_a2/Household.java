@@ -10,36 +10,46 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "HOUSEHOLD", schema = "APP")
+@Table(name="HOUSEHOLD", schema="APP")
 public class Household {
-	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id")
-	private int id;
-		
-	@ManyToOne
-	@JoinColumn(name="geographicArea", nullable=false)
-	private GeographicArea geographicArea;
-	
-	@ManyToOne
-	@JoinColumn(name="censusYear", nullable=false)
-	private CensusYear censusYear;
-	
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="ID", nullable = false)
+    private int id;
+    
+    @ManyToOne
+	@JoinColumn(name="CENSUSYEAR")
+    private CensusYear censusYear;
+    @ManyToOne
+	@JoinColumn(name="GEOGRAPHICAREA")
+    private GeographicArea geographicArea;
+    
+    @ManyToOne
+	@JoinColumn(name="HOUSEHOLDEARNERS")
+    private HouseholdEarners householdEarners;
+    @ManyToOne
+	@JoinColumn(name="HOUSEHOLDSBYAGERANGE")
+    private HouseholdsByAgeRange householdsByAgeRange;
+    @ManyToOne
+	@JoinColumn(name="HOUSEHOLDSIZE")
+    private HouseholdSize householdSize;
+    @ManyToOne
+	@JoinColumn(name="HOUSEHOLDTYPE")
+    private HouseholdType householdType;
+    @ManyToOne
+	@JoinColumn(name="TOTALINCOME")
+    private TotalIncome totalIncome;
+    @Column(name="NUMBERREPORTED", nullable = false)
+    private int numberReported;
+    
+	public Household() {}
+
 	public int getId() {
 		return id;
 	}
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public GeographicArea getGeographicArea() {
-		return geographicArea;
-	}
-
-	public void setGeographicArea(GeographicArea geographicArea) {
-		this.geographicArea = geographicArea;
 	}
 
 	public CensusYear getCensusYear() {
@@ -50,20 +60,20 @@ public class Household {
 		this.censusYear = censusYear;
 	}
 
-	public HouseholdType getHouseholdType() {
-		return householdType;
+	public GeographicArea getGeographicArea() {
+		return geographicArea;
 	}
 
-	public void setHouseholdType(HouseholdType householdType) {
-		this.householdType = householdType;
+	public void setGeographicArea(GeographicArea geographicArea) {
+		this.geographicArea = geographicArea;
 	}
 
-	public HouseholdSize getHouseholdSize() {
-		return householdSize;
+	public HouseholdEarners getHouseholdEarners() {
+		return householdEarners;
 	}
 
-	public void setHouseholdSize(HouseholdSize householdSize) {
-		this.householdSize = householdSize;
+	public void setHouseholdEarners(HouseholdEarners householdEarners) {
+		this.householdEarners = householdEarners;
 	}
 
 	public HouseholdsByAgeRange getHouseholdsByAgeRange() {
@@ -74,12 +84,20 @@ public class Household {
 		this.householdsByAgeRange = householdsByAgeRange;
 	}
 
-	public HouseholdEarners getHouseholdEarners() {
-		return householdEarners;
+	public HouseholdSize getHouseholdSize() {
+		return householdSize;
 	}
 
-	public void setHouseholdEarners(HouseholdEarners householdEarners) {
-		this.householdEarners = householdEarners;
+	public void setHouseholdSize(HouseholdSize householdSize) {
+		this.householdSize = householdSize;
+	}
+
+	public HouseholdType getHouseholdType() {
+		return householdType;
+	}
+
+	public void setHouseholdType(HouseholdType householdType) {
+		this.householdType = householdType;
 	}
 
 	public TotalIncome getTotalIncome() {
@@ -97,27 +115,4 @@ public class Household {
 	public void setNumberReported(int numberReported) {
 		this.numberReported = numberReported;
 	}
-
-	@ManyToOne
-	@JoinColumn(name="householdType" , nullable= false)
-	private HouseholdType householdType;
-	
-	@ManyToOne
-	@JoinColumn(name= "householdSize",nullable = false)
-	private HouseholdSize householdSize;
-	
-	@ManyToOne
-	@JoinColumn(name="householdsByAgeRange" , nullable = false)
-	private HouseholdsByAgeRange householdsByAgeRange;
-	
-	@ManyToOne
-	@JoinColumn(name="householdEarners",nullable=false)
-	private HouseholdEarners householdEarners;
-	
-	@ManyToOne
-	@JoinColumn(name="totalIncome",nullable=false)
-	private TotalIncome totalIncome;
-	
-	@Column(name="numberReported")
-	private int numberReported;
 }

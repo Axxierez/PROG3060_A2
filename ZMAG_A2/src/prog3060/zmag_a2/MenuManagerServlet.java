@@ -1,8 +1,6 @@
 package prog3060.zmag_a2;
 
 import java.io.IOException;
-import java.sql.Connection;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,9 +20,7 @@ public class MenuManagerServlet extends HttpServlet {
         String level = request.getParameter("level");
         String altCode = request.getParameter("altCode");
         String geoAreaName = request.getParameter("geoAreaName");
-         
         
-        Connection dbConnection = (Connection) session.getAttribute("dbConnection");
         String ACTION = request.getParameter("action");
 
         if ("".equals(id)) {session.setAttribute("id", null); id = null;} 
@@ -46,15 +42,7 @@ public class MenuManagerServlet extends HttpServlet {
         else {session.setAttribute("action", ACTION);}
 
         if("VIEW_ALL_CLASSIFICATIONS".equals(ACTION)){
-        	resetSessionAttributes(session);
-        	session.setAttribute("dbConnection", dbConnection);
             response.sendRedirect("./geoClassifications.jsp");
-            return;
-        }
-        if("VIEW_ALL_GEOAREAS".equals(ACTION)){
-        	resetSessionAttributes(session);
-        	session.setAttribute("dbConnection", dbConnection);
-            response.sendRedirect("./geoAreas.jsp");
             return;
         }
         if("VIEW_DETAILS".equals(ACTION)){
@@ -64,15 +52,5 @@ public class MenuManagerServlet extends HttpServlet {
         
         response.sendRedirect("./geoAreas.jsp");
         return;
-	}
-	
-	
-	private void resetSessionAttributes(HttpSession session) {
-		session.setAttribute("id", null);
-		session.setAttribute("code", null);
-		session.setAttribute("level", null);
-		session.setAttribute("altCode", null);
-		session.setAttribute("geoAreaName", null);
-		session.setAttribute("action", null);
 	}
 }

@@ -1,6 +1,5 @@
 package prog3060.zmag_a2;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,39 +12,32 @@ import javax.persistence.Table;
 @Entity
 @Table(name="AGE", schema="APP")
 public class Age {
-	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="ageID")
-	private int ageID;
-	
-	@ManyToOne
-	@JoinColumn(name="AGEGROUP", nullable=false)
-	private AgeGroup ageGroup;
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="AGEID", nullable = false)
+    private int ageID;
+    
+    @ManyToOne
+	@JoinColumn(name="AGEGROUP")
+    private AgeGroup ageGroup;
+    @ManyToOne
+	@JoinColumn(name="CENSUSYEAR")
+    private CensusYear censusYear;
+    @ManyToOne
+	@JoinColumn(name="GEOGRAPHICAREA")
+    private GeographicArea geographicArea;
 
-	@ManyToOne
-	@JoinColumn(name="CENSUSYEAR",nullable=false)
-	private CensusYear censusYear;
-	
-	@ManyToOne
-	@JoinColumn(name="GEOGRAPHICAREA",nullable=false)
-	private GeographicArea geographicArea;
-
-	@Column(name="combined")
-	private int combined;
-	
-	@Column(name="male")
-	private int male;
-	
-	@Column(name="female")
-	private int female;
+    @Column(name="COMBINED", nullable = false)
+    private int combined;
+    @Column(name="MALE", nullable = false)
+    private int male;
+    @Column(name="FEMALE", nullable = false)
+    private int female;
+    
+	public Age() {}
 
 	public int getAgeID() {
 		return ageID;
-	}
-
-	public void setAgeID(int ageID) {
-		this.ageID = ageID;
 	}
 
 	public AgeGroup getAgeGroup() {
@@ -96,4 +88,9 @@ public class Age {
 		this.female = female;
 	}
 
+	public void setAgeID(int ageID) {
+		this.ageID = ageID;
+	}
+
+	
 }

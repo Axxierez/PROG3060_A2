@@ -16,34 +16,29 @@
 		<script type=”text/javascript” src=”bootstrap/js/bootstrap.min.js”></script>
 	</head>
 	<body>
-        <jsp:useBean id="connectionBean" class="prog3060.zmag_a2.ConnectionBean" scope="session"/>
+        <jsp:useBean id="jpaBean" class="prog3060.zmag_a2.JPABean" scope="session"/>
     	<%
-    	String id = (String) session.getAttribute("id");
-    	String code = (String) session.getAttribute("code");
-    	String level = (String) session.getAttribute("level");
-    	String altCode = (String) session.getAttribute("altCode");
+    	int id = jpaBean.parseStringToInt((String)session.getAttribute("id"));
+    	int code = jpaBean.parseStringToInt((String)session.getAttribute("code"));
+    	int level = jpaBean.parseStringToInt((String)session.getAttribute("level"));
+    	int altCode = jpaBean.parseStringToInt((String)session.getAttribute("altCode"));
     	String ACTION = (String) session.getAttribute("action");
-    	if(null == session.getAttribute("dbConnection")){
+    	
+    	if(!jpaBean.isValid()){
         	response.sendRedirect("./login.jsp");
         	return;
         }
-    	Connection dbConnection = (Connection) session.getAttribute("dbConnection");
     	
-		List<GeographicArea> geoAreas = new ArrayList<GeographicArea>();
+		List<Object[]> data = new ArrayList<Object[]>();
 		
+		if("VIEW_BY_LEVEL".equals(ACTION))
+			data = jpaBean.getGeographicAreasByLevel(level);
+		else
+			data = jpaBean.getAllGeographicAreas();
+
 		int householdsMatchingArea = 0;
-		if("VIEW_BY_LEVEL".equals(ACTION)) {
-	    	geoAreas = connectionBean.getGeographicAreasByLevel(level,dbConnection);
-	    }
-		else if("VIEW_BY_PARENT".equals(ACTION)){
-	    	geoAreas = connectionBean.getGeographicAreasByParent(id, code, level, dbConnection);
-	    }
-		else{
-	    	geoAreas = connectionBean.getGeographicAreasByID(id,dbConnection);
-	    }
-		
-		if(null!=level &&(level.equals("0")||level.equals("1"))){
-			householdsMatchingArea=	connectionBean.getHouseholdsMatchingAreaSQL(id, dbConnection);
+		if(level <= 1){
+			//householdsMatchingArea=	connectionBean.getHouseholdsMatchingAreaSQL(id, dbConnection);
 		}
     	%>
     	<table class="table table-hover table-dark table-sm table-striped">
@@ -61,25 +56,31 @@
 		  </thead>
 		  <tbody>
     	<%
-        for(GeographicArea item : geoAreas)
-        {
-        	String detailParameters = "?id=" + item.getGeographicAreaID() +
-        	        "&code=" + item.getCode() +
-        	        "&level=" + item.getLevel() +
-        	        "&altCode=" + item.getAlternativeCode() +
-        	        "&geoAreaName=" + item.getName().replace("'","");
-        	
-	    	%><tr onclick="window.location=<%out.print("'./MenuManagerServlet" + detailParameters + 
-	        "&action=" + "VIEW_DETAILS" + "\'");%>"><%
-	        %><td class="text-center"><% out.print(item.getGeographicAreaID());%></td><% 
-	        %><td><% out.print(item.getName());%></td><% 
-	        %><td><% out.print(item.getCode());%></td><% 
-	        %><td><% out.print(item.getLevel());%></td><% 
-	        %><td><% out.print(item.getAlternativeCode());%></td><% 
-	        %><td><% out.print(item.getTotalPopulation());%></td><% 
-	        %><td><% out.print(item.getMalePopulation());%></td><% 
-	        %><td><% out.print(item.getFemalePopulation());%></td><% 
-	        %></tr><%
+    	if(data != null){
+	        Iterator <Object[]> dataIterator = data.iterator();
+	        while(dataIterator.hasNext())
+	        {
+	            Object[] item = dataIterator.next();
+	        	Age age = (Age) item[0];
+	        	GeographicArea geoArea = (GeographicArea) item[1];
+	        	String detailParameters = "?id=" + geoArea.getGeographicAreaID() +
+	        	        "&code=" + geoArea.getCode() +
+	        	        "&level=" + geoArea.getLevel() +
+	        	        "&altCode=" + geoArea.getAlternativeCode() +
+	        	        "&geoAreaName=" + geoArea.getName().replace("'","");
+	        	
+		    	%><tr onclick="window.location=<%out.print("'./MenuManagerServlet" + detailParameters + 
+		        "&action=" + "VIEW_DETAILS" + "\'");%>"><%
+		        %><td class="text-center"><% out.print(geoArea.getGeographicAreaID());%></td><% 
+		        %><td><% out.print(geoArea.getName());%></td><% 
+		        %><td><% out.print(geoArea.getCode());%></td><% 
+		        %><td><% out.print(geoArea.getLevel());%></td><% 
+		        %><td><% out.print(geoArea.getAlternativeCode());%></td><% 
+		        %><td><% out.print(age.getCombined());%></td><% 
+		        %><td><% out.print(age.getMale());%></td><% 
+		        %><td><% out.print(age.getFemale());%></td><% 
+		        %></tr><%
+	    	}
     	}
         %></tbody></table>
         

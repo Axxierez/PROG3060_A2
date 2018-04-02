@@ -16,41 +16,86 @@
 		<script type=”text/javascript” src=”bootstrap/js/bootstrap.min.js”></script>
 	</head>
 	<body>
-        <jsp:useBean id="connectionBean" class="prog3060.zmag_a2.ConnectionBean" scope="session"/>
+        <jsp:useBean id="jpaBean" class="prog3060.zmag_a2.JPABean" scope="session"/>
     	<%
-    	if(null == session.getAttribute("dbConnection")){
+    	if(!jpaBean.isValid()){
         	response.sendRedirect("./login.jsp");
         	return;
         }
-    	Connection dbConnection = (Connection) session.getAttribute("dbConnection");
-    	List<AgeGroup> ageGroups = connectionBean.getAgeGroupPopulation(dbConnection);
+		List<Object[]> data = jpaBean.getAgeGroupPopulation(2016);
     	%>
-    	<table class="table table-hover table-dark table-sm table-striped">
-			  <thead>
-			    <tr>
-			      <th>Age Group</th>
-			      <th>Male Population (2011)</th>
-			      <th>Female Population (2011)</th>
-			      <th>Total Population (2011)</th>
-			      <th>Male Population (2016)</th>
-			      <th>Female Population (2016)</th>
-			      <th>Total Population (2016)</th>
-			    </tr>
-			  </thead>
-			<tbody>
-			
-			<%
-	        for(AgeGroup item : ageGroups)
-	        {
-		        %><tr><%
-		        %><td><% out.print("");%></td><% 
-		        %><td><% out.print("");%></td><% 
-		        %><td><% out.print("");%></td><% 
-		        %><td><% out.print("");%></td><% 
-		        %></tr><%
-	    	}
-	        %>
-	        </tbody>
-        </table>
+    	<div class="row">
+    		<div class="col-sm">
+			<h2 class="mx-5">Census Year 2016</h2>
+		    	<table class="table table-hover table-dark table-sm table-striped">
+					  <thead>
+					    <tr>
+					      <th>Age Group</th>
+					      <th>Male Population</th>
+					      <th>Female Population</th>
+					      <th>Total Population</th>
+					    </tr>
+					  </thead>
+					<tbody>
+					
+					<%
+			    	if(data != null){
+				        Iterator <Object[]> dataIterator = data.iterator();
+				        while(dataIterator.hasNext())
+				        {
+				            Object[] item = dataIterator.next();
+				        	Age age = (Age) item[0];
+				        	AgeGroup ageGroup = (AgeGroup) item[1];
+				        	
+					        %><tr><%
+					        %><td><% out.print(ageGroup.getDescription());%></td><% 
+					        %><td><% out.print(age.getMale());%></td><% 
+					        %><td><% out.print(age.getFemale());%></td><% 
+					        %><td><% out.print(age.getCombined());%></td><% 
+					        %></tr><%
+			    		}
+			    	}
+			        %>
+			        </tbody>
+		        </table>
+    		</div>
+    		<div class="col-sm">
+		        <% 
+				data = jpaBean.getAgeGroupPopulation(2011);
+				%>
+		        <h2 class="mx-5">Census Year 2011</h2>
+		    	<table class="table table-hover table-dark table-sm table-striped">
+					  <thead>
+					    <tr>
+					      <th>Age Group</th>
+					      <th>Male Population</th>
+					      <th>Female Population</th>
+					      <th>Total Population</th>
+					    </tr>
+					  </thead>
+					<tbody>
+					
+					<%
+			    	if(data != null){
+				        Iterator <Object[]> dataIterator = data.iterator();
+				        while(dataIterator.hasNext())
+				        {
+				            Object[] item = dataIterator.next();
+				        	Age age = (Age) item[0];
+				        	AgeGroup ageGroup = (AgeGroup) item[1];
+				        	
+					        %><tr><%
+					        %><td><% out.print(ageGroup.getDescription());%></td><% 
+					        %><td><% out.print(age.getMale());%></td><% 
+					        %><td><% out.print(age.getFemale());%></td><% 
+					        %><td><% out.print(age.getCombined());%></td><% 
+					        %></tr><%
+			    		}
+			    	}
+			        %>
+			        </tbody>
+		        </table>
+    		</div>
+    	</div>
 	</body>
 </html>

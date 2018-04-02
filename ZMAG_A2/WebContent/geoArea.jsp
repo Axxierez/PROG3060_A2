@@ -16,23 +16,62 @@
 		<script type=”text/javascript” src=”bootstrap/js/bootstrap.min.js”></script>
 	</head>
 	<body>
-        <jsp:useBean id="connectionBean" class="prog3060.zmag_a2.ConnectionBean" scope="session"/>
+<jsp:useBean id="jpaBean" class="prog3060.zmag_a2.JPABean" scope="session"/>
     	<%
-    	String id = (String) session.getAttribute("id");
-    	String name = (String) session.getAttribute("geoAreaName");
-    	String code = (String) session.getAttribute("code");
-    	String level = (String) session.getAttribute("level");
-    	String altCode = (String) session.getAttribute("altCode");
+    	int id = jpaBean.parseStringToInt((String)session.getAttribute("id"));
+    	int code = jpaBean.parseStringToInt((String)session.getAttribute("code"));
+    	int level = jpaBean.parseStringToInt((String)session.getAttribute("level"));
+    	int altCode = jpaBean.parseStringToInt((String)session.getAttribute("altCode"));
     	String ACTION = (String) session.getAttribute("action");
-    	if(null == session.getAttribute("dbConnection")){
+    	
+    	if(!jpaBean.isValid()){
         	response.sendRedirect("./login.jsp");
         	return;
         }
-    	Connection dbConnection = (Connection) session.getAttribute("dbConnection");
-    	
-		List<GeographicArea> childAreas = connectionBean.getGeographicAreasByParent(id, code, level, dbConnection);
+		List<Object[]> detailData = jpaBean.getGeographicAreasByID(id);
+    	if(detailData != null){
+	        Iterator <Object[]> dataIterator = detailData.iterator();
+	        while(dataIterator.hasNext())
+	        {
+	            Object[] item = dataIterator.next();
+	        	Age age = (Age) item[0];
+	        	GeographicArea geoArea = (GeographicArea) item[1];
+	        	
+	        	// This is being UBER dumb
+	        	
+	        	//List<Object[]> householdData = jpaBean.getHouseholdsByArea(geoArea.getGeographicAreaID());
+	        	//Iterator <Object[]> householdIterator = householdData.iterator();
+	        	//if(householdIterator.hasNext()){
+		        //	Object[] householdItem = householdIterator.next();
+		        //	Household household = (Household) householdItem[0];
+	        	//}
+	        	
+	        	int householdCount = 0;
+	        	try{
+		        	//Household household = (Household) householdData.get(0)[0];
+		        	//householdCount = household.getNumberReported();
+		        } catch(Exception e){
+		        	householdCount = 0;
+		        }
+
+		        %><hr><div class="mx-5"><h2><% out.print(geoArea.getName());%></h2>
+		        <table>
+		        <tr><td class="font-weight-bold">Code </td><td class="text-right px-5"><% out.print(geoArea.getCode());%></td></tr>
+		        <tr><td class="font-weight-bold">Level </td><td class="text-right px-5"><% out.print(geoArea.getLevel());%></td></tr>
+		        <tr><td class="font-weight-bold">Alternative Code </td><td class="text-right px-5"><% out.print(geoArea.getAlternativeCode());%></td></tr>
+		        <tr><td class="font-weight-bold">Total Population </td><td class="text-right px-5"><% out.print(age.getCombined());%></td></tr>
+		        <tr><td class="font-weight-bold">Male Population </td><td class="text-right px-5"><% out.print(age.getMale());%></td></tr>
+		        <tr><td class="font-weight-bold">Female Population </td><td class="text-right px-5"><% out.print(age.getFemale());%></td></tr>
+		        <%if(level <= 1){%>
+		        <tr><td class="font-weight-bold">Total Households </td><td class="text-right px-5"><% out.print(householdCount);%></td></tr>
+		        <%}%>
+		        </table>
+		        </div><hr><%
+	    	}
+    	}
+		List<Object[]> data = jpaBean.getGeographicAreasByParent(code, level);
     	%>
-		<h2><% out.print(name); %></h2>
+    	<h4 class="mx-5">Geographic Areas</h4>
     	<table class="table table-hover table-dark table-sm table-striped">
 		  <thead>
 		    <tr>
@@ -48,25 +87,31 @@
 		  </thead>
 		  <tbody>
     	<%
-        for(GeographicArea item : childAreas)
-        {
-        	String detailParameters = "?id=" + item.getGeographicAreaID() +
-        	        "&code=" + item.getCode() +
-        	        "&level=" + item.getLevel() +
-        	        "&altCode=" + item.getAlternativeCode() +
-        	        "&geoAreaName=" + item.getName().replace("'","");
-        	
-	    	%><tr onclick="window.location=<%out.print("'./MenuManagerServlet" + detailParameters + 
-	        "&action=" + "VIEW_DETAILS" + "\'");%>"><%
-	        %><td class="text-center"><% out.print(item.getGeographicAreaID());%></td><% 
-	        %><td><% out.print(item.getName());%></td><% 
-	        %><td><% out.print(item.getCode());%></td><% 
-	        %><td><% out.print(item.getLevel());%></td><% 
-	        %><td><% out.print(item.getAlternativeCode());%></td><% 
-	        %><td><% out.print(item.getTotalPopulation());%></td><% 
-	        %><td><% out.print(item.getMalePopulation());%></td><% 
-	        %><td><% out.print(item.getFemalePopulation());%></td><% 
-	        %></tr><%
+    	if(data != null){
+	        Iterator <Object[]> dataIterator = data.iterator();
+	        while(dataIterator.hasNext())
+	        {
+	            Object[] item = dataIterator.next();
+	        	Age age = (Age) item[0];
+	        	GeographicArea geoArea = (GeographicArea) item[1];
+	        	String detailParameters = "?id=" + geoArea.getGeographicAreaID() +
+	        	        "&code=" + geoArea.getCode() +
+	        	        "&level=" + geoArea.getLevel() +
+	        	        "&altCode=" + geoArea.getAlternativeCode() +
+	        	        "&geoAreaName=" + geoArea.getName().replace("'","");
+	        	
+		    	%><tr onclick="window.location=<%out.print("'./MenuManagerServlet" + detailParameters + 
+		        "&action=" + "VIEW_DETAILS" + "\'");%>"><%
+		        %><td class="text-center"><% out.print(geoArea.getGeographicAreaID());%></td><% 
+		        %><td><% out.print(geoArea.getName());%></td><% 
+		        %><td><% out.print(geoArea.getCode());%></td><% 
+		        %><td><% out.print(geoArea.getLevel());%></td><% 
+		        %><td><% out.print(geoArea.getAlternativeCode());%></td><% 
+		        %><td><% out.print(age.getCombined());%></td><% 
+		        %><td><% out.print(age.getMale());%></td><% 
+		        %><td><% out.print(age.getFemale());%></td><% 
+		        %></tr><%
+	    	}
     	}
         %></tbody></table>
 	</body>

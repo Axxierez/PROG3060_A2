@@ -29,6 +29,8 @@
         	return;
         }
 		List<Object[]> detailData = jpaBean.getGeographicAreasByID(id);
+		List<Age> yearData = jpaBean.getCensusYearPopulation(id,2011);
+		yearData.addAll(jpaBean.getCensusYearPopulation(id,2016));
     	if(detailData != null){
 	        Iterator <Object[]> dataIterator = detailData.iterator();
 	        while(dataIterator.hasNext())
@@ -37,14 +39,7 @@
 	        	Age age = (Age) item[0];
 	        	GeographicArea geoArea = (GeographicArea) item[1];
 	        	
-	        	// This is being UBER dumb
-	        	
-	        	//List<Object[]> householdData = jpaBean.getHouseholdsByArea(geoArea.getGeographicAreaID());
-	        	//Iterator <Object[]> householdIterator = householdData.iterator();
-	        	//if(householdIterator.hasNext()){
-		        //	Object[] householdItem = householdIterator.next();
-		        //	Household household = (Household) householdItem[0];
-	        	//}
+		       
 	        	
 	        	int householdCount = 0;
 	        	try{
@@ -59,18 +54,33 @@
 		        <tr><td class="font-weight-bold">Code </td><td class="text-right px-5"><% out.print(geoArea.getCode());%></td></tr>
 		        <tr><td class="font-weight-bold">Level </td><td class="text-right px-5"><% out.print(geoArea.getLevel());%></td></tr>
 		        <tr><td class="font-weight-bold">Alternative Code </td><td class="text-right px-5"><% out.print(geoArea.getAlternativeCode());%></td></tr>
-		        <tr><td class="font-weight-bold">Total Population </td><td class="text-right px-5"><% out.print(age.getCombined());%></td></tr>
-		        <tr><td class="font-weight-bold">Male Population </td><td class="text-right px-5"><% out.print(age.getMale());%></td></tr>
-		        <tr><td class="font-weight-bold">Female Population </td><td class="text-right px-5"><% out.print(age.getFemale());%></td></tr>
 		        <%if(level <= 1){%>
 		        <tr><td class="font-weight-bold">Total Households </td><td class="text-right px-5"><% out.print(householdCount);%></td></tr>
 		        <%}%>
 		        </table>
-		        </div><hr><%
+		        </div><hr><div class="row">
+    		<%
+		        
+ 				for(int i = 0; i < 2; i++){%>
+ 				<div class="col-sm"><div class="mx-5"><h2><% out.print(yearData.get(i).getCensusYear().getCensusYear());%></h2>
+		        	<table>
+		        		<tr>
+		        			<td>
+		        			 <tr><td class="font-weight-bold">Male </td><td class="text-right px-5"><% out.print(yearData.get(i).getMale());%></td></tr>
+						     <tr><td class="font-weight-bold">Female </td><td class="text-right px-5"><% out.print(yearData.get(i).getFemale());%></td></tr>
+						     <tr><td class="font-weight-bold">Combined</td><td class="text-right px-5"><% out.print(yearData.get(i).getCombined());%></td></tr>
+		        			</td>
+		        		</tr>
+		        	</table>
+		        </div></div><hr>
+		        <%
+		        }
+		        
 	    	}
     	}
 		List<Object[]> data = jpaBean.getGeographicAreasByParent(code, level);
     	%>
+    	</div><br>
     	<h4 class="mx-5">Geographic Areas</h4>
     	<table class="table table-hover table-dark table-sm table-striped">
 		  <thead>

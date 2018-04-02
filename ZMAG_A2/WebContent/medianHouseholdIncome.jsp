@@ -22,30 +22,27 @@
         	response.sendRedirect("./login.jsp");
         	return;
         }
-		List<Object[]> data = jpaBean.getMedianHouseholdIncome();
+		List<Household> data = jpaBean.getMedianHouseholdIncome();
     	%>
 		<table class="table table-hover table-dark table-sm table-striped">
 		  <thead>
 		    <tr>
-		      <th>Name</th>
-		      <th>Code</th>		     
+		      <th class="text-center">Name</th>
+		      <th>Income</th>		     
 		    </tr>
 		  </thead>
 		  <tbody>
 		  
 		  <%
 		  if(data != null){
-	        Iterator <Object[]> dataIterator = data.iterator();
-	        while(dataIterator.hasNext())
-	        {
-	            Object[] item = dataIterator.next();
-	        	Household geoArea = (Household) item[0];
-	        	 GeographicArea income = (GeographicArea )item[1];
-	        	
-		    	%><td class="text-center"><% out.print(income.getName());%></td><% 
-		        %><td><% out.print(geoArea.getTotalIncome().getDescription());%></td><% 
-		        %></tr><%
-	    	}
+			  
+			  for(int i= 0; i < data.size(); i++){
+		        	Household household = data.get(i);
+		        	
+			    	%><td class="text-center"><% out.print(household.getGeographicArea().getName());%></td><% 
+			        %><td><% out.print(household.getNumberReported());%></td><% 
+			        %></tr><%
+			  }
     	}
         %></tbody></table>
 		

@@ -37,9 +37,7 @@
 			data = jpaBean.getAllGeographicAreas();
 
 		int householdsMatchingArea = 0;
-		if(level <= 1){
-			//householdsMatchingArea=	connectionBean.getHouseholdsMatchingAreaSQL(id, dbConnection);
-		}
+		
     	%>
     	<table class="table table-hover table-dark table-sm table-striped">
 		  <thead>
